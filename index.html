@@ -4,17 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interval Timer</title>
-    <link rel="stylesheet" href="style.css"> <!-- Link to your CSS file -->
+    <link rel="stylesheet" href="style.css"> <!-- Ensure your CSS file is linked correctly -->
 </head>
 <body>
-    <div id="timer">
-        <input type="number" id="workDuration" placeholder="Workout Duration (sec)">
-        <input type="number" id="restDuration" placeholder="Rest Duration (sec)">
-        <button id="startTimer">Start</button>
-        <button id="pauseTimer" disabled>Pause</button>
-        <button id="resetTimer" disabled>Reset</button>
-        <div id="timerDisplay">00:00</div>
+    <div id="timerSetup">
+        <h2>Program Your Workout</h2>
+        <div id="roundsContainer">
+            <!-- Rounds will be dynamically added here -->
+        </div>
+        <button onclick="addRound()">Add Round</button>
+        <div>
+            <label for="numSets">Number of Sets:</label>
+            <input type="number" id="numSets" value="1" min="1">
+        </div>
+        <button id="startWorkout">Start Workout</button>
     </div>
-    <script src="script.js"></script> <!-- Link to your JavaScript file -->
+    <div id="timerDisplay">00:00</div>
+    <script src="script.js"></script> <!-- Ensure your JavaScript file is linked correctly -->
 </body>
 </html>
