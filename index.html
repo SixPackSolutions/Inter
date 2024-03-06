@@ -186,6 +186,8 @@ input:checked + .slider:before {
   border-radius: 5px;
 }
 </style>
+<!DOCTYPE html>
+<html lang="en">
 </head>
 <body>
 <div id="timer-container">
@@ -203,26 +205,34 @@ input:checked + .slider:before {
     </ul>
   </div>
   <div id="repeat-container">
-  <label class="switch">
-    <input type="checkbox" id="repeat-toggle">
-    <span class="slider round"></span>
-  </label>
-  <p>Repeat Timer</p>
-</div>
+    <label class="switch">
+      <input type="checkbox" id="repeat-toggle">
+      <span class="slider round"></span>
+    </label>
+    <p>Repeat Timer</p>
+  </div>
   <div id="save-timer">
     <button id="save-timer-btn">Save timer</button>
   </div>
- <div id="myModal" class="modal">
+  <div id="myModal" class="modal">
     <div class="modal-content">
       <span class="close">&times;</span>
       <p>Add an interval and select a sound:</p>
       <input type="number" id="intervalDuration" placeholder="Interval in seconds">
       <select id="soundSelector">
         <option value="sound1.mp3">Sound 1</option>
+        <!-- Add more sound options as needed -->
       </select>
+      <!-- Alarm Toggle Checkbox -->
+      <div>
+        <label for="alarmToggle">Enable Alarm Sound:</label>
+        <input type="checkbox" id="alarmToggle" checked> <!-- Checked by default -->
+      </div>
       <button id="saveInterval">Save Interval</button>
     </div>
-</div>
+  </div>
+</body>
+</html>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     let intervals = [];
