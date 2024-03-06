@@ -5,7 +5,104 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Interval Workout Timer</title>
 <style>
-  /* Placeholder for CSS */
+/* Basic reset for padding and margin */
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif; /* A simple, widely available font */
+}
+
+#timer-container {
+  max-width: 400px; /* Set a max-width for the container */
+  margin: 20px auto; /* Center the container */
+  text-align: center;
+  background: #f5f5f5; /* Light grey background */
+  padding: 20px;
+  border-radius: 10px; /* Rounded corners */
+}
+
+#timer-display {
+  background: black;
+  color: white;
+  font-size: 48px; /* Large font size for the timer */
+  padding: 20px;
+  border-radius: 10px; /* Rounded corners */
+  margin-bottom: 20px; /* Space below the timer display */
+}
+
+#timer-controls button {
+  padding: 10px 20px; /* Padding inside the buttons */
+  font-size: 16px; /* A larger font size for better readability */
+  border: none; /* Remove the default border */
+  border-radius: 5px; /* Slightly rounded corners for the buttons */
+  margin: 0 10px; /* Space between buttons */
+}
+
+#start-btn {
+  background-color: #4CAF50; /* Green color */
+  color: white;
+}
+
+#clear-btn {
+  background-color: #f44336; /* Red color */
+  color: white;
+}
+
+#intervals-container {
+  margin: 20px 0; /* Vertical spacing */
+}
+
+#add-interval-btn {
+  background-color: #009688; /* Teal color */
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  margin-bottom: 20px; /* Space below the button */
+}
+
+#intervals-list {
+  list-style-type: none; /* Remove the default bullet points */
+  text-align: left;
+  padding-left: 0; /* Align with the rest of the content */
+  margin-bottom: 20px; /* Space below the list */
+}
+
+#repeat-container {
+  margin-bottom: 20px; /* Space below the repeat container */
+}
+
+#repeat-container button {
+  padding: 5px 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  margin: 0 5px;
+}
+
+#repeat-on {
+  background-color: #4CAF50; /* Green color */
+  color: white;
+}
+
+#repeat-off {
+  background-color: #f44336; /* Red color */
+  color: white;
+}
+
+#save-timer-btn {
+  background-color: #2196F3; /* Blue color */
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+}
 </style>
 </head>
 <body>
@@ -35,7 +132,67 @@
   </div>
 </div>
 <script>
-  // Placeholder for JavaScript
+// Placeholder for the intervals
+let intervals = [];
+let currentIntervalIndex = 0;
+let intervalId = null;
+
+function startTimer() {
+  if (intervals.length === 0) {
+    alert("Please add intervals before starting the timer.");
+    return;
+  }
+
+  // Start the first interval
+  startInterval(intervals[currentIntervalIndex]);
+}
+
+function startInterval(interval) {
+  // This function will handle the logic to start an individual interval
+  const endTime = Date.now() + interval * 1000;
+  intervalId = setInterval(function() {
+    const remainingTime = endTime - Date.now();
+    if (remainingTime <= 0) {
+      clearInterval(intervalId);
+      // Move to the next interval or stop if it's the last one
+      currentIntervalIndex++;
+      if (currentIntervalIndex < intervals.length) {
+        startInterval(intervals[currentIntervalIndex]);
+      } else {
+        // Optionally, handle the repeat logic here
+      }
+      // Play sound here
+    } else {
+      // Update the display
+      const seconds = Math.ceil(remainingTime / 1000);
+      document.getElementById('timer').textContent = formatTime(seconds);
+    }
+  }, 1000);
+}
+
+function formatTime(seconds) {
+  // This function will format the time in "HH:MM:SS" format
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
+  return [
+    h > 0 ? h : '00',
+    m > 9 ? m : '0' + m,
+    s > 9 ? s : '0' + s
+  ].join(':');
+}
+
+function stopTimer() {
+  clearInterval(intervalId);
+  currentIntervalIndex = 0;
+  // Optionally, reset the display
+}
+
+// Event listeners for start and stop buttons
+document.getElementById('start-btn').addEventListener('click', startTimer);
+document.getElementById('clear-btn').addEventListener('click', stopTimer);
+
+// The add interval functionality and audio will be added later
 </script>
 </body>
 </html>
