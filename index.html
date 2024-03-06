@@ -231,8 +231,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let intervals = [];
     let currentIntervalIndex = 0;
     let intervalId = null;
-    // Adjust the path as necessary to ensure it's correct relative to your HTML file
-    let selectedSound = 'sound1.mp3'; // Default sound
+    let selectedSound = 'sound1.mp3'; // Default sound, adjust path as necessary
 
     const modal = document.getElementById('myModal');
     const btnCloseModal = document.getElementsByClassName("close")[0];
@@ -272,27 +271,34 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         currentIntervalIndex = 0;
+        // Display the time immediately when the timer starts
+        document.getElementById('timer').textContent = formatTime(intervals[currentIntervalIndex]);
         startInterval(intervals[currentIntervalIndex]);
     }
 
     function startInterval(interval) {
         if (intervalId) clearInterval(intervalId);
-        const endTime = Date.now() + interval * 1000;
+        const startTime = Date.now();
+        const endTime = startTime + interval * 1000;
+        document.getElementById('timer').textContent = formatTime(interval);
+
         intervalId = setInterval(function() {
             const remainingTime = endTime - Date.now();
+            const seconds = Math.ceil(remainingTime / 1000);
+
             if (remainingTime <= 0) {
                 clearInterval(intervalId);
-                playSound(selectedSound); // Ensure this is called when an interval finishes
+                document.getElementById('timer').textContent = "00:00:00";
+                playSound(selectedSound);
                 currentIntervalIndex++;
+
                 if (currentIntervalIndex < intervals.length) {
-                    startInterval(intervals[currentIntervalIndex]);
+                    setTimeout(() => startInterval(intervals[currentIntervalIndex]), 1000); // Wait a second before starting the next interval
                 } else if (document.getElementById('repeat-toggle').checked) {
                     currentIntervalIndex = 0;
-                    startInterval(intervals[currentIntervalIndex]); // Repeat from the first interval if repeat is enabled
-                } 
-                // No need for an else clause for logging "Timer completed" since the function will end naturally
+                    setTimeout(() => startInterval(intervals[currentIntervalIndex]), 1000); // Wait a second before repeating
+                }
             } else {
-                const seconds = Math.ceil(remainingTime / 1000);
                 document.getElementById('timer').textContent = formatTime(seconds);
             }
         }, 1000);
@@ -310,7 +316,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('timer').textContent = "00:00:00";
         currentIntervalIndex = 0;
         intervals = []; // Reset intervals
-        updateIntervalList(); // Also clears the displayed list
+        updateIntervalList(); // Clear displayed list
     }
 
     function updateIntervalList() {
