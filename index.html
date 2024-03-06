@@ -192,7 +192,39 @@ function stopTimer() {
 document.getElementById('start-btn').addEventListener('click', startTimer);
 document.getElementById('clear-btn').addEventListener('click', stopTimer);
 
-// The add interval functionality and audio will be added later
+// Function to add an interval
+function addInterval() {
+  // For simplicity, we'll prompt the user to enter the interval in seconds
+  const intervalDuration = prompt("Enter the interval duration in seconds:");
+  
+  // Validate the input
+  if (intervalDuration !== null && intervalDuration.trim() !== '' && !isNaN(intervalDuration)) {
+    const interval = parseInt(intervalDuration.trim(), 10);
+    if (interval <= 0) {
+      alert("Please enter a positive number.");
+    } else {
+      // Add the interval to the list
+      intervals.push(interval);
+      updateIntervalList();
+    }
+  }
+}
+
+// Function to update the display of intervals
+function updateIntervalList() {
+  const intervalsList = document.getElementById('intervals-list');
+  intervalsList.innerHTML = ''; // Clear the current list
+  
+  intervals.forEach((interval, index) => {
+    const listItem = document.createElement('li');
+    listItem.textContent = `Interval ${index + 1}: ${interval} seconds`;
+    intervalsList.appendChild(listItem);
+  });
+}
+
+// Attach the addInterval function to the "Add interval" button
+document.getElementById('add-interval-btn').addEventListener('click', addInterval);
+
 </script>
 </body>
 </html>
