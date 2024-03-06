@@ -142,11 +142,9 @@ function startTimer() {
     alert("Please add intervals before starting the timer.");
     return;
   }
-
   // Start the first interval
   startInterval(intervals[currentIntervalIndex]);
 }
-
 function startInterval(interval) {
   // This function will handle the logic to start an individual interval
   const endTime = Date.now() + interval * 1000;
@@ -221,10 +219,6 @@ function updateIntervalList() {
     intervalsList.appendChild(listItem);
   });
 }
-
-// Attach the addInterval function to the "Add interval" button
-document.getElementById('add-interval-btn').addEventListener('click', addInterval);
-
 </script>
 </body>
 </html>
