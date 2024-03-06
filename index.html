@@ -132,92 +132,79 @@ body {
   </div>
 </div>
 <script>
-let intervals = [];
-let currentIntervalIndex = 0;
-let intervalId = null;
+document.addEventListener('DOMContentLoaded', function () {
+    let intervals = [];
+    let currentIntervalIndex = 0;
+    let intervalId = null;
 
-function startTimer() {
-  if (intervals.length === 0) {
-    alert("Please add intervals before starting the timer.");
-    return;
-  }
-  // Start the first interval
-  startInterval(intervals[currentIntervalIndex]);
-}
-function startInterval(interval) {
-  // This function will handle the logic to start an individual interval
-  const endTime = Date.now() + interval * 1000;
-  intervalId = setInterval(function() {
-    const remainingTime = endTime - Date.now();
-    if (remainingTime <= 0) {
-      clearInterval(intervalId);
-      // Move to the next interval or stop if it's the last one
-      currentIntervalIndex++;
-      if (currentIntervalIndex < intervals.length) {
-        startInterval(intervals[currentIntervalIndex]);
-      } else {
-        // Optionally, handle the repeat logic here
+    function startTimer() {
+      if (intervals.length === 0) {
+        alert("Please add intervals before starting the timer.");
+        return;
       }
-      // Play sound here
-    } else {
-      // Update the display
-      const seconds = Math.ceil(remainingTime / 1000);
-      document.getElementById('timer').textContent = formatTime(seconds);
+      startInterval(intervals[currentIntervalIndex]);
     }
-  }, 1000);
-}
 
-function formatTime(seconds) {
-  // This function will format the time in "HH:MM:SS" format
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = seconds % 60;
-  return [
-    h > 0 ? h : '00',
-    m > 9 ? m : '0' + m,
-    s > 9 ? s : '0' + s
-  ].join(':');
-}
-
-function stopTimer() {
-  clearInterval(intervalId);
-  currentIntervalIndex = 0;
-  // Optionally, reset the display
-}
-
-// Event listeners for start and stop buttons
-document.getElementById('start-btn').addEventListener('click', startTimer);
-document.getElementById('clear-btn').addEventListener('click', stopTimer);
-
-// Function to add an interval
-function addInterval() {
-  // For simplicity, we'll prompt the user to enter the interval in seconds
-  const intervalDuration = prompt("Enter the interval duration in seconds:");
-  
-  // Validate the input
-  if (intervalDuration !== null && intervalDuration.trim() !== '' && !isNaN(intervalDuration)) {
-    const interval = parseInt(intervalDuration.trim(), 10);
-    if (interval <= 0) {
-      alert("Please enter a positive number.");
-    } else {
-      // Add the interval to the list
-      intervals.push(interval);
-      updateIntervalList();
+    function startInterval(interval) {
+      const endTime = Date.now() + interval * 1000;
+      intervalId = setInterval(function() {
+        const remainingTime = endTime - Date.now();
+        if (remainingTime <= 0) {
+          clearInterval(intervalId);
+          currentIntervalIndex++;
+          if (currentIntervalIndex < intervals.length) {
+            startInterval(intervals[currentIntervalIndex]);
+          } else {
+            // Optionally, handle the repeat logic here
+          }
+          // Play sound here
+        } else {
+          const seconds = Math.ceil(remainingTime / 1000);
+          document.getElementById('timer').textContent = formatTime(seconds);
+        }
+      }, 1000);
     }
-  }
-}
 
-// Function to update the display of intervals
-function updateIntervalList() {
-  const intervalsList = document.getElementById('intervals-list');
-  intervalsList.innerHTML = ''; // Clear the current list
-  
-  intervals.forEach((interval, index) => {
-    const listItem = document.createElement('li');
-    listItem.textContent = `Interval ${index + 1}: ${interval} seconds`;
-    intervalsList.appendChild(listItem);
-  });
-}
+    function formatTime(seconds) {
+      const h = Math.floor(seconds / 3600);
+      const m = Math.floor((seconds % 3600) / 60);
+      const s = seconds % 60;
+      return [h > 0 ? h : '00', m > 9 ? m : '0' + m, s > 9 ? s : '0' + s].join(':');
+    }
+
+    function stopTimer() {
+      clearInterval(intervalId);
+      currentIntervalIndex = 0;
+    }
+
+    // Attach event listeners
+    document.getElementById('start-btn').addEventListener('click', startTimer);
+    document.getElementById('clear-btn').addEventListener('click', stopTimer);
+    document.getElementById('add-interval-btn').addEventListener('click', addInterval);
+
+    function addInterval() {
+      const intervalDuration = prompt("Enter the interval duration in seconds:");
+      if (intervalDuration !== null && intervalDuration.trim() !== '' && !isNaN(intervalDuration)) {
+        const interval = parseInt(intervalDuration.trim(), 10);
+        if (interval <= 0) {
+          alert("Please enter a positive number.");
+        } else {
+          intervals.push(interval);
+          updateIntervalList();
+        }
+      }
+    }
+
+    function updateIntervalList() {
+      const intervalsList = document.getElementById('intervals-list');
+      intervalsList.innerHTML = '';
+      intervals.forEach((interval, index) => {
+        const listItem = document.createElement('li');
+        listItem.textContent = `Interval ${index + 1}: ${interval} seconds`;
+        intervalsList.appendChild(listItem);
+      });
+    }
+});
 </script>
 </body>
 </html>
