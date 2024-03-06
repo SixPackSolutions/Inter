@@ -227,23 +227,55 @@ input:checked + .slider:before {
     </div>
 </div>
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     let intervals = [];
     let currentIntervalIndex = 0;
     let intervalId = null;
     let selectedSound = 'sound1.mp3'; // Default sound
+
+    const modal = document.getElementById('myModal');
+    const btnCloseModal = document.getElementsByClassName("close")[0];
+    const btnSaveInterval = document.getElementById('saveInterval');
+    const btnAddInterval = document.getElementById('add-interval-btn');
+    const startBtn = document.getElementById('start-btn');
+    const clearBtn = document.getElementById('clear-btn');
+
+    btnAddInterval.addEventListener('click', function() {
+        modal.style.display = "block";
+    });
+
+    btnCloseModal.addEventListener('click', function() {
+        modal.style.display = "none";
+    });
+
+    btnSaveInterval.addEventListener('click', function() {
+        const intervalDuration = document.getElementById('intervalDuration').value;
+        selectedSound = document.getElementById('soundSelector').value;
+
+        if (intervalDuration && !isNaN(intervalDuration) && intervalDuration > 0) {
+            intervals.push(parseInt(intervalDuration));
+            updateIntervalList();
+            modal.style.display = "none"; // Close the modal
+            document.getElementById('intervalDuration').value = ''; // Reset input field
+        } else {
+            alert("Please enter a positive number.");
+        }
+    });
+
+    startBtn.addEventListener('click', startTimer);
+    clearBtn.addEventListener('click', stopTimer);
 
     function startTimer() {
         if (intervals.length === 0) {
             alert("Please add intervals before starting the timer.");
             return;
         }
-        currentIntervalIndex = 0; // Ensure timer starts from the first interval
+        currentIntervalIndex = 0;
         startInterval(intervals[currentIntervalIndex]);
     }
 
     function startInterval(interval) {
-        if(intervalId) clearInterval(intervalId); // Clear existing interval timer if any
+        if (intervalId) clearInterval(intervalId);
         const endTime = Date.now() + interval * 1000;
         intervalId = setInterval(function() {
             const remainingTime = endTime - Date.now();
@@ -254,7 +286,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     startInterval(intervals[currentIntervalIndex]);
                 } else if (document.getElementById('repeat-toggle').checked) {
                     currentIntervalIndex = 0;
-                    startInterval(intervals[currentIntervalIndex]); // Repeat from first interval
+                    startInterval(intervals[currentIntervalIndex]); // Repeat from the first interval
+                } else {
+                    // Timer completed without repeat
+                    console.log("Timer completed");
                 }
                 playSound(selectedSound);
             } else {
@@ -265,92 +300,35 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function formatTime(seconds) {
-      const h = Math.floor(seconds / 3600);
-      const m = Math.floor((seconds % 3600) / 60);
-      const s = seconds % 60;
-      return [h > 0 ? h : '00', m > 9 ? m : '0' + m, s > 9 ? s : '0' + s].join(':');
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = seconds % 60;
+        return [h > 0 ? h : '00', m > 9 ? m : '0' + m, s > 9 ? s : '0' + s].join(':');
     }
 
-function stopTimer() {
-        if(intervalId) clearInterval(intervalId);
+    function stopTimer() {
+        if (intervalId) clearInterval(intervalId);
         document.getElementById('timer').textContent = "00:00:00";
         currentIntervalIndex = 0;
         intervals = []; // Reset intervals
         updateIntervalList(); // Clear displayed list
     }
 
-    document.getElementById('start-btn').addEventListener('click', startTimer);
-    document.getElementById('clear-btn').addEventListener('click', stopTimer);
-    document.getElementById('add-interval-btn').addEventListener('click', addInterval);
-
-    function addInterval() {
-      const intervalDuration = prompt("Enter the interval duration in seconds:");
-      if (intervalDuration !== null && intervalDuration.trim() !== '' && !isNaN(intervalDuration)) {
-        const interval = parseInt(intervalDuration.trim(), 10);
-        if (interval > 0) {
-          intervals.push(interval);
-          updateIntervalList();
-        } else {
-          alert("Please enter a positive number.");
-        }
-      }
-    }
-
     function updateIntervalList() {
-      const intervalsList = document.getElementById('intervals-list');
-      intervalsList.innerHTML = '';
-      intervals.forEach((interval, index) => {
-        const listItem = document.createElement('li');
-        listItem.textContent = `Interval ${index + 1}: ${interval} seconds`;
-        intervalsList.appendChild(listItem);
-      });
-    }
-});
-  document.addEventListener('DOMContentLoaded', function () {
-    let intervals = [];
-    let currentIntervalIndex = 0;
-    let intervalId = null;
-    let selectedSound = 'sound1.mp3'; // Default sound
-    
-    // Show the modal when the "Add interval" button is clicked
-    document.getElementById('add-interval-btn').addEventListener('click', function() {
-      document.getElementById('myModal').style.display = "block";
-    });
-
-    // When the user clicks on <span> (x), close the modal
-    document.getElementsByClassName("close")[0].onclick = function() {
-      document.getElementById('myModal').style.display = "none";
-    }
-   document.getElementById('saveInterval').addEventListener('click', function() {
-        const intervalDuration = document.getElementById('intervalDuration').value;
-        selectedSound = document.getElementById('soundSelector').value;
-
-        if (intervalDuration && !isNaN(intervalDuration) && intervalDuration > 0) {
-            intervals.push(parseInt(intervalDuration));
-            updateIntervalList();
-            document.getElementById('myModal').style.display = "none"; // Close the modal
-        } else {
-            alert("Please enter a positive number.");
-        }
-    });
-
-    function updateIntervalList() {
-        // Update interval list remains unchanged
+        const intervalsList = document.getElementById('intervals-list');
+        intervalsList.innerHTML = '';
+        intervals.forEach((interval, index) => {
+            const listItem = document.createElement('li');
+            listItem.textContent = `Interval ${index + 1}: ${interval} seconds`;
+            intervalsList.appendChild(listItem);
+        });
     }
 
     function playSound(sound) {
         var audio = new Audio(sound);
         audio.play();
     }
-
-    // Event listeners for starting and stopping the timer
-    document.getElementById('start-btn').addEventListener('click', startTimer);
-    document.getElementById('clear-btn').addEventListener('click', stopTimer);
-
-    // Adjusted to show the modal directly without the initial prompt
-    document.getElementById('add-interval-btn').addEventListener('click', function() {
-        document.getElementById('myModal').style.display = "block";
-    });
+});
 </script>
 </body>
 </html>
