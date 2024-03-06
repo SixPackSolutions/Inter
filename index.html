@@ -231,6 +231,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let intervals = [];
     let currentIntervalIndex = 0;
     let intervalId = null;
+    // Adjust the path as necessary to ensure it's correct relative to your HTML file
     let selectedSound = 'sound1.mp3'; // Default sound
 
     const modal = document.getElementById('myModal');
@@ -281,17 +282,15 @@ document.addEventListener('DOMContentLoaded', function() {
             const remainingTime = endTime - Date.now();
             if (remainingTime <= 0) {
                 clearInterval(intervalId);
+                playSound(selectedSound); // Ensure this is called when an interval finishes
                 currentIntervalIndex++;
                 if (currentIntervalIndex < intervals.length) {
                     startInterval(intervals[currentIntervalIndex]);
                 } else if (document.getElementById('repeat-toggle').checked) {
                     currentIntervalIndex = 0;
-                    startInterval(intervals[currentIntervalIndex]); // Repeat from the first interval
-                } else {
-                    // Timer completed without repeat
-                    console.log("Timer completed");
-                }
-                playSound(selectedSound);
+                    startInterval(intervals[currentIntervalIndex]); // Repeat from the first interval if repeat is enabled
+                } 
+                // No need for an else clause for logging "Timer completed" since the function will end naturally
             } else {
                 const seconds = Math.ceil(remainingTime / 1000);
                 document.getElementById('timer').textContent = formatTime(seconds);
@@ -311,7 +310,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('timer').textContent = "00:00:00";
         currentIntervalIndex = 0;
         intervals = []; // Reset intervals
-        updateIntervalList(); // Clear displayed list
+        updateIntervalList(); // Also clears the displayed list
     }
 
     function updateIntervalList() {
