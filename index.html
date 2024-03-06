@@ -231,36 +231,37 @@ document.addEventListener('DOMContentLoaded', function () {
     let intervals = [];
     let currentIntervalIndex = 0;
     let intervalId = null;
+    let selectedSound = 'sound1.mp3'; // Default sound
 
     function startTimer() {
-      if (intervals.length === 0) {
-        alert("Please add intervals before starting the timer.");
-        return;
-      }
-      currentIntervalIndex = 0; // Ensure timer starts from the first interval
-      startInterval(intervals[currentIntervalIndex]);
+        if (intervals.length === 0) {
+            alert("Please add intervals before starting the timer.");
+            return;
+        }
+        currentIntervalIndex = 0; // Ensure timer starts from the first interval
+        startInterval(intervals[currentIntervalIndex]);
     }
 
     function startInterval(interval) {
-      if(intervalId) clearInterval(intervalId); // Clear existing interval timer if any
-      const endTime = Date.now() + interval * 1000;
-      intervalId = setInterval(function() {
-        const remainingTime = endTime - Date.now();
-        if (remainingTime <= 0) {
-          clearInterval(intervalId);
-          currentIntervalIndex++;
-          if (currentIntervalIndex < intervals.length) {
-            startInterval(intervals[currentIntervalIndex]);
-          } else if (document.getElementById('repeat-toggle').checked) {
-            currentIntervalIndex = 0;
-            startInterval(intervals[currentIntervalIndex]); // Repeat from first interval
-          }
-          // Add audio play logic here for the interval end
-        } else {
-          const seconds = Math.ceil(remainingTime / 1000);
-          document.getElementById('timer').textContent = formatTime(seconds);
-        }
-      }, 1000);
+        if(intervalId) clearInterval(intervalId); // Clear existing interval timer if any
+        const endTime = Date.now() + interval * 1000;
+        intervalId = setInterval(function() {
+            const remainingTime = endTime - Date.now();
+            if (remainingTime <= 0) {
+                clearInterval(intervalId);
+                currentIntervalIndex++;
+                if (currentIntervalIndex < intervals.length) {
+                    startInterval(intervals[currentIntervalIndex]);
+                } else if (document.getElementById('repeat-toggle').checked) {
+                    currentIntervalIndex = 0;
+                    startInterval(intervals[currentIntervalIndex]); // Repeat from first interval
+                }
+                playSound(selectedSound);
+            } else {
+                const seconds = Math.ceil(remainingTime / 1000);
+                document.getElementById('timer').textContent = formatTime(seconds);
+            }
+        }, 1000);
     }
 
     function formatTime(seconds) {
@@ -270,12 +271,12 @@ document.addEventListener('DOMContentLoaded', function () {
       return [h > 0 ? h : '00', m > 9 ? m : '0' + m, s > 9 ? s : '0' + s].join(':');
     }
 
-    function stopTimer() {
-      if(intervalId) clearInterval(intervalId);
-      document.getElementById('timer').textContent = "00:00:00";
-      currentIntervalIndex = 0;
-      intervals = []; // Reset intervals
-      updateIntervalList(); // Clear displayed list
+function stopTimer() {
+        if(intervalId) clearInterval(intervalId);
+        document.getElementById('timer').textContent = "00:00:00";
+        currentIntervalIndex = 0;
+        intervals = []; // Reset intervals
+        updateIntervalList(); // Clear displayed list
     }
 
     document.getElementById('start-btn').addEventListener('click', startTimer);
@@ -310,8 +311,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let currentIntervalIndex = 0;
     let intervalId = null;
     let selectedSound = 'sound1.mp3'; // Default sound
-
-    // Your existing JavaScript code for timer logic remains unchanged
     
     // Show the modal when the "Add interval" button is clicked
     document.getElementById('add-interval-btn').addEventListener('click', function() {
@@ -322,29 +321,36 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementsByClassName("close")[0].onclick = function() {
       document.getElementById('myModal').style.display = "none";
     }
+   document.getElementById('saveInterval').addEventListener('click', function() {
+        const intervalDuration = document.getElementById('intervalDuration').value;
+        selectedSound = document.getElementById('soundSelector').value;
 
-    // Save the interval and selected sound
-    document.getElementById('saveInterval').addEventListener('click', function() {
-      const intervalDuration = document.getElementById('intervalDuration').value;
-      selectedSound = document.getElementById('soundSelector').value;
-
-      if (intervalDuration && !isNaN(intervalDuration) && intervalDuration > 0) {
-        intervals.push(parseInt(intervalDuration));
-        updateIntervalList();
-        document.getElementById('myModal').style.display = "none"; // Close the modal
-      } else {
-        alert("Please enter a positive number.");
-      }
+        if (intervalDuration && !isNaN(intervalDuration) && intervalDuration > 0) {
+            intervals.push(parseInt(intervalDuration));
+            updateIntervalList();
+            document.getElementById('myModal').style.display = "none"; // Close the modal
+        } else {
+            alert("Please enter a positive number.");
+        }
     });
 
-    // Function to play sound at the end of each interval
-    function playSound(sound) {
-      var audio = new Audio(sound);
-      audio.play();
+    function updateIntervalList() {
+        // Update interval list remains unchanged
     }
 
-    // Modify the end of your startInterval function to include playSound(selectedSound);
-});
+    function playSound(sound) {
+        var audio = new Audio(sound);
+        audio.play();
+    }
+
+    // Event listeners for starting and stopping the timer
+    document.getElementById('start-btn').addEventListener('click', startTimer);
+    document.getElementById('clear-btn').addEventListener('click', stopTimer);
+
+    // Adjusted to show the modal directly without the initial prompt
+    document.getElementById('add-interval-btn').addEventListener('click', function() {
+        document.getElementById('myModal').style.display = "block";
+    });
 </script>
 </body>
 </html>
