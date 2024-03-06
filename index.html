@@ -74,7 +74,43 @@ body {
   padding-left: 0; /* Align with the rest of the content */
   margin-bottom: 20px; /* Space below the list */
 }
+ /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgb(0,0,0);
+      background-color: rgba(0,0,0,0.4);
+      padding-top: 60px;
+    }
 
+    .modal-content {
+      background-color: #fefefe;
+      margin: 5% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+  
 #repeat-container {
   margin-bottom: 20px; /* Space below the repeat container */
 }
@@ -176,6 +212,19 @@ input:checked + .slider:before {
   <div id="save-timer">
     <button id="save-timer-btn">Save timer</button>
   </div>
+ <div id="myModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <p>Add an interval and select a sound:</p>
+      <input type="number" id="intervalDuration" placeholder="Interval in seconds">
+      <select id="soundSelector">
+        <option value="sound1.mp3">Sound 1</option>
+        <option value="sound2.mp3">Sound 2</option>
+        <option value="sound3.mp3">Sound 3</option>
+        <!-- Add more sounds as needed -->
+      </select>
+      <button id="saveInterval">Save Interval</button>
+    </div>
 </div>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -255,6 +304,46 @@ document.addEventListener('DOMContentLoaded', function () {
         intervalsList.appendChild(listItem);
       });
     }
+});
+  document.addEventListener('DOMContentLoaded', function () {
+    let intervals = [];
+    let currentIntervalIndex = 0;
+    let intervalId = null;
+    let selectedSound = 'sound1.mp3'; // Default sound
+
+    // Your existing JavaScript code for timer logic remains unchanged
+    
+    // Show the modal when the "Add interval" button is clicked
+    document.getElementById('add-interval-btn').addEventListener('click', function() {
+      document.getElementById('myModal').style.display = "block";
+    });
+
+    // When the user clicks on <span> (x), close the modal
+    document.getElementsByClassName("close")[0].onclick = function() {
+      document.getElementById('myModal').style.display = "none";
+    }
+
+    // Save the interval and selected sound
+    document.getElementById('saveInterval').addEventListener('click', function() {
+      const intervalDuration = document.getElementById('intervalDuration').value;
+      selectedSound = document.getElementById('soundSelector').value;
+
+      if (intervalDuration && !isNaN(intervalDuration) && intervalDuration > 0) {
+        intervals.push(parseInt(intervalDuration));
+        updateIntervalList();
+        document.getElementById('myModal').style.display = "none"; // Close the modal
+      } else {
+        alert("Please enter a positive number.");
+      }
+    });
+
+    // Function to play sound at the end of each interval
+    function playSound(sound) {
+      var audio = new Audio(sound);
+      audio.play();
+    }
+
+    // Modify the end of your startInterval function to include playSound(selectedSound);
 });
 </script>
 </body>
