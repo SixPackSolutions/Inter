@@ -185,10 +185,12 @@ document.addEventListener('DOMContentLoaded', function () {
         alert("Please add intervals before starting the timer.");
         return;
       }
+      currentIntervalIndex = 0; // Ensure timer starts from the first interval
       startInterval(intervals[currentIntervalIndex]);
     }
 
     function startInterval(interval) {
+      if(intervalId) clearInterval(intervalId); // Clear existing interval timer if any
       const endTime = Date.now() + interval * 1000;
       intervalId = setInterval(function() {
         const remainingTime = endTime - Date.now();
@@ -197,10 +199,11 @@ document.addEventListener('DOMContentLoaded', function () {
           currentIntervalIndex++;
           if (currentIntervalIndex < intervals.length) {
             startInterval(intervals[currentIntervalIndex]);
-          } else {
-            // Optionally, handle the repeat logic here
+          } else if (document.getElementById('repeat-toggle').checked) {
+            currentIntervalIndex = 0;
+            startInterval(intervals[currentIntervalIndex]); // Repeat from first interval
           }
-          // Play sound here
+          // Add audio play logic here for the interval end
         } else {
           const seconds = Math.ceil(remainingTime / 1000);
           document.getElementById('timer').textContent = formatTime(seconds);
@@ -216,11 +219,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function stopTimer() {
-      clearInterval(intervalId);
+      if(intervalId) clearInterval(intervalId);
+      document.getElementById('timer').textContent = "00:00:00";
       currentIntervalIndex = 0;
+      intervals = []; // Reset intervals
+      updateIntervalList(); // Clear displayed list
     }
 
-    // Attach event listeners
     document.getElementById('start-btn').addEventListener('click', startTimer);
     document.getElementById('clear-btn').addEventListener('click', stopTimer);
     document.getElementById('add-interval-btn').addEventListener('click', addInterval);
@@ -229,11 +234,11 @@ document.addEventListener('DOMContentLoaded', function () {
       const intervalDuration = prompt("Enter the interval duration in seconds:");
       if (intervalDuration !== null && intervalDuration.trim() !== '' && !isNaN(intervalDuration)) {
         const interval = parseInt(intervalDuration.trim(), 10);
-        if (interval <= 0) {
-          alert("Please enter a positive number.");
-        } else {
+        if (interval > 0) {
           intervals.push(interval);
           updateIntervalList();
+        } else {
+          alert("Please enter a positive number.");
         }
       }
     }
@@ -248,15 +253,6 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     }
 });
-if (currentIntervalIndex >= intervals.length) {
-    let repeat = document.getElementById('repeat-toggle').checked;
-    if (repeat) {
-      currentIntervalIndex = 0; // Reset the index to start over
-      startInterval(intervals[currentIntervalIndex]); // Start the first interval again
-    } else {
-      // Handle the timer finishing without repeat
-      console.log("Timer finished without repeat.");
-    }
 </script>
 </body>
 </html>
