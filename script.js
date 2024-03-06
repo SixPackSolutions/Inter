@@ -1,15 +1,25 @@
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('startTimer').addEventListener('click', startWorkout);
-    document.getElementById('pauseTimer').addEventListener('click', pauseResumeTimer);
-    document.getElementById('resetTimer').addEventListener('click', resetTimer);
-});
-
 let currentSet = 1;
 let currentRound = 0;
 let totalSets = 1;
 let isPaused = false;
 let timer = null;
 let workoutRounds = [];
+
+// Adds initial event listeners when the document is fully loaded
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('startTimer').addEventListener('click', startWorkout);
+    document.getElementById('pauseTimer').addEventListener('click', pauseResumeTimer);
+    document.getElementById('resetTimer').addEventListener('click', resetTimer);
+    // Assuming you have a button with id="addRound" for adding new rounds
+    document.getElementById('addRound').addEventListener('click', addRound);
+    
+    // Add the first round by default
+    addRound();
+    
+    // Initially, pause and reset buttons are disabled until the workout starts
+    document.getElementById('pauseTimer').disabled = true;
+    document.getElementById('resetTimer').disabled = true;
+});
 
 function addRound() {
     const roundsContainer = document.getElementById('roundsContainer');
@@ -23,34 +33,42 @@ function addRound() {
 }
 
 function startWorkout() {
+    // Reset workout rounds array and current positions
     workoutRounds = [];
-    totalSets = parseInt(document.getElementById('numSets').value) || 1;
-    currentSet = 1;
     currentRound = 0;
+    currentSet = 1;
+    
+    // Fetch and store total sets
+    totalSets = parseInt(document.getElementById('numSets').value, 10) || 1;
+    
+    // Disable start button and enable pause and reset buttons
+    document.getElementById('startTimer').disabled = true;
+    document.getElementById('pauseTimer').disabled = false;
+    document.getElementById('resetTimer').disabled = false;
 
+    // Collect rounds data
     document.querySelectorAll('.round').forEach(roundDiv => {
-        const workDuration = roundDiv.querySelector('.workDuration').value;
-        const restDuration = roundDiv.querySelector('.restDuration').value;
-        workoutRounds.push({workDuration: parseInt(workDuration, 10), restDuration: parseInt(restDuration, 10)});
+        const workDuration = parseInt(roundDiv.querySelector('.workDuration').value, 10) || 0;
+        const restDuration = parseInt(roundDiv.querySelector('.restDuration').value, 10) || 0;
+        workoutRounds.push({workDuration, restDuration});
     });
 
-    if (workoutRounds.length > 0) {
-        startNextRound();
-    }
+    // Start the first round
+    startNextRound();
 }
 
 function startNextRound() {
     if (currentRound < workoutRounds.length) {
-        runTimer('Work', workoutRounds[currentRound].workDuration, function() {
-            runTimer('Rest', workoutRounds[currentRound].restDuration, function() {
+        runTimer('Work', workoutRounds[currentRound].workDuration, () => {
+            runTimer('Rest', workoutRounds[currentRound].restDuration, () => {
                 currentRound++;
                 startNextRound();
             });
         });
     } else if (currentSet < totalSets) {
-        currentRound = 0;
+        currentRound = 0; // Reset rounds for the next set
         currentSet++;
-        startNextRound();
+        startNextRound(); // Start the next set
     } else {
         alert('Workout Complete!');
         resetTimer();
@@ -60,7 +78,7 @@ function startNextRound() {
 function runTimer(phase, duration, callback) {
     let time = duration;
     updateTimerDisplay(time);
-    timer = setInterval(function() {
+    timer = setInterval(() => {
         if (!isPaused) {
             time--;
             updateTimerDisplay(time);
@@ -73,35 +91,29 @@ function runTimer(phase, duration, callback) {
 }
 
 function pauseResumeTimer() {
-    if (isPaused) {
-        isPaused = false;
-        this.textContent = 'Pause';
-    } else {
-        isPaused = true;
-        this.textContent = 'Resume';
-    }
+    isPaused = !isPaused;
+    document.getElementById('pauseTimer').textContent = isPaused ? 'Resume' : 'Pause';
 }
 
 function resetTimer() {
     clearInterval(timer);
+    timer = null;
     isPaused = false;
-    document.getElementById('pauseTimer').textContent = 'Pause';
+    currentSet = 1;
+    currentRound = 0;
+    workoutRounds = [];
+    
     document.getElementById('timerDisplay').textContent = '00:00';
+    document.getElementById('startTimer').disabled = false;
     document.getElementById('pauseTimer').disabled = true;
     document.getElementById('resetTimer').disabled = true;
+    document.getElementById('pauseTimer').textContent = 'Pause';
+    
+    // Optionally clear the rounds inputs if you want a fresh start after reset
 }
 
 function updateTimerDisplay(time) {
     const minutes = Math.floor(time / 60);
     const seconds = time % 60;
-    document.getElementById('timerDisplay').textContent = `${pad(minutes)}:${pad(seconds)}`;
+    document.getElementById('timerDisplay').textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 }
-
-function pad(number) {
-    return number < 10 ? '0' + number : number;
-}
-
-// Initial setup: Add the first round by default and enable buttons
-addRound();
-document.getElementById('pauseTimer').disabled = false;
-document.getElementById('resetTimer').disabled = false;
