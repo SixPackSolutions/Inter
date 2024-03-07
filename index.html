@@ -238,7 +238,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let intervals = [];
     let currentIntervalIndex = 0;
     let intervalId = null;
-    let selectedSound = 'sound1.mp3'; // Default sound, adjust path as necessary
+    let selectedSound = 'sound1.mp3'; // Default sound, fixed to 'sound1.mp3'
 
     const modal = document.getElementById('myModal');
     const btnCloseModal = document.getElementsByClassName("close")[0];
@@ -257,7 +257,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     btnSaveInterval.addEventListener('click', function() {
         const intervalDuration = document.getElementById('intervalDuration').value;
-        selectedSound = document.getElementById('soundSelector').value;
 
         if (intervalDuration && !isNaN(intervalDuration) && intervalDuration > 0) {
             intervals.push(parseInt(intervalDuration));
@@ -278,7 +277,6 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         currentIntervalIndex = 0;
-        // Display the time immediately when the timer starts
         document.getElementById('timer').textContent = formatTime(intervals[currentIntervalIndex]);
         startInterval(intervals[currentIntervalIndex]);
     }
@@ -296,14 +294,16 @@ document.addEventListener('DOMContentLoaded', function() {
             if (remainingTime <= 0) {
                 clearInterval(intervalId);
                 document.getElementById('timer').textContent = "00:00:00";
-                playSound(selectedSound);
+                if (document.getElementById('sound-toggle').checked) {
+                    playSound(selectedSound);
+                }
                 currentIntervalIndex++;
 
                 if (currentIntervalIndex < intervals.length) {
-                    setTimeout(() => startInterval(intervals[currentIntervalIndex]), 1000); // Wait a second before starting the next interval
+                    setTimeout(() => startInterval(intervals[currentIntervalIndex]), 1000);
                 } else if (document.getElementById('repeat-toggle').checked) {
                     currentIntervalIndex = 0;
-                    setTimeout(() => startInterval(intervals[currentIntervalIndex]), 1000); // Wait a second before repeating
+                    setTimeout(() => startInterval(intervals[currentIntervalIndex]), 1000);
                 }
             } else {
                 document.getElementById('timer').textContent = formatTime(seconds);
@@ -322,8 +322,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (intervalId) clearInterval(intervalId);
         document.getElementById('timer').textContent = "00:00:00";
         currentIntervalIndex = 0;
-        intervals = []; // Reset intervals
-        updateIntervalList(); // Clear displayed list
+        intervals = [];
+        updateIntervalList();
     }
 
     function updateIntervalList() {
@@ -339,6 +339,10 @@ document.addEventListener('DOMContentLoaded', function() {
     function playSound(sound) {
         var audio = new Audio(sound);
         audio.play();
+        setTimeout(() => {
+            audio.pause();
+            audio.currentTime = 0; // Rewind the sound
+        }, 3000); // Stop the sound after 3 seconds
     }
 });
 </script>
