@@ -217,15 +217,12 @@ input:checked + .slider:before {
   <div id="myModal" class="modal">
     <div class="modal-content">
       <span class="close">&times;</span>
-      <p>Add an interval and select a sound:</p>
+      <p>Add an interval:</p>
       <input type="number" id="intervalDuration" placeholder="Interval in seconds">
-      <select id="soundSelector">
-        <option value="sound1.mp3">Sound 1</option>
-        <!-- Add more sound options as needed -->
       </select>
       <!-- Alarm Toggle Checkbox -->
       <div>
-        <label for="alarmToggle">Enable Alarm Sound:</label>
+        <label for="alarmToggle">Alert when finished?:</label>
         <input type="checkbox" id="alarmToggle" checked> <!-- Checked by default -->
       </div>
       <button id="saveInterval">Save Interval</button>
